@@ -1,12 +1,685 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的个人网站</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ===== 标题与摘要 ===== -->
+<!-- TODO: 把「你的名字」改成你的真实姓名或昵称 -->
+<title>你的名字 · 个人主页</title>
+<meta name="description" content="你的名字的个人主页：关于我、技能栈、项目作品与联系方式。">
+<meta name="author" content="你的名字">
+<meta name="theme-color" id="theme-color" content="#faf9f7">
+<meta name="color-scheme" content="light dark">
+
+<!-- ===== 分享卡片 ===== -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="你的名字 · 个人主页">
+<meta property="og:description" content="关于我、技能栈、项目作品与联系方式。">
+<!-- TODO: 绑定自定义域名后填写，例如 https://example.com/ -->
+<meta property="og:url" content="">
+<meta name="twitter:card" content="summary">
+
+<!-- 站点图标：内联 SVG，无外部文件 -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23faf9f7'/%3E%3Ctext x='16' y='23' font-size='20' font-weight='700' font-family='Helvetica,Arial,sans-serif' fill='%2314130f' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
+
+<style>
+  /* =========================================================
+     设计语言：瑞士排版 / 杂志感
+     纸感暖白 + 墨黑 + 单一朱红强调色；严格两栏网格；
+     细线分割；零圆角、零阴影；排版本身即设计。
+     ========================================================= */
+
+  :root{
+    color-scheme: light;
+    --paper:#faf9f7;
+    --paper-2:#f2efe9;
+    --ink:#14130f;
+    --ink-2:#3c382f;
+    --muted:#7a746a;
+    --rule:#ded8cc;
+    --rule-strong:#c9c2b4;
+    --accent:#c0392b;
+  }
+  [data-theme="dark"]{
+    color-scheme: dark;
+    --paper:#100f0e;
+    --paper-2:#171614;
+    --ink:#ece7de;
+    --ink-2:#c8c1b6;
+    --muted:#8e877d;
+    --rule:#2b2823;
+    --rule-strong:#3b372f;
+    --accent:#e0684f;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+                "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC",
+                Roboto, Arial, sans-serif;
+    font-size:16.5px;
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    transition:background-color .25s ease, color .25s ease;
+  }
+  ::selection{background:var(--accent);color:var(--paper)}
+
+  .mono{
+    font-family:ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas,
+                "Liberation Mono", Menlo, monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  .micro{
+    font-family:ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas,
+                "Liberation Mono", Menlo, monospace;
+    font-size:11px;
+    line-height:1.5;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  .skip{
+    position:absolute;left:-9999px;top:0;z-index:100;
+    background:var(--ink);color:var(--paper);padding:10px 16px;
+    font-size:13px;text-decoration:none;
+  }
+  .skip:focus{left:0}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  a{color:inherit}
+
+  /* ===== 版面骨架 ===== */
+  .shell{
+    max-width:1240px;
+    margin:0 auto;
+    padding:0 clamp(20px,4.4vw,64px);
+  }
+  .layout{
+    display:grid;
+    grid-template-columns:minmax(190px,236px) minmax(0,1fr);
+    column-gap:clamp(28px,4.6vw,72px);
+  }
+
+  /* ===== 左侧身份栏 ===== */
+  .rail{
+    position:sticky;
+    top:0;
+    height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:clamp(28px,5vh,56px) 0 clamp(24px,5vh,44px);
+    border-right:1px solid var(--rule);
+    padding-right:clamp(20px,3vw,40px);
+  }
+  .monogram{
+    width:46px;height:46px;
+    display:grid;place-items:center;
+    border:1px solid var(--ink);
+    font-size:19px;font-weight:700;letter-spacing:.02em;
+  }
+  .rail .eyebrow{margin:22px 0 18px}
+  .rail-name{
+    margin:0;
+    font-size:1.32rem;
+    font-weight:700;
+    letter-spacing:-.01em;
+    line-height:1.3;
+  }
+  .rail-role{
+    margin:6px 0 0;
+    font-size:13.5px;
+    line-height:1.7;
+    color:var(--muted);
+  }
+  .rail-nav{
+    margin:clamp(28px,6vh,64px) 0 0;
+    padding:0;
+    list-style:none;
+    border-top:1px solid var(--rule);
+  }
+  .rail-nav li{border-bottom:1px solid var(--rule)}
+  .rail-nav a{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    padding:9px 0;
+    font-size:14px;
+    text-decoration:none;
+    color:var(--ink-2);
+    transition:color .18s ease;
+  }
+  .rail-nav .n{font-size:11px;letter-spacing:.08em;color:var(--muted);transition:color .18s ease}
+  .rail-nav a:hover,.rail-nav a[aria-current="true"]{color:var(--accent)}
+  .rail-nav a:hover .n,.rail-nav a[aria-current="true"] .n{color:var(--accent)}
+  .rail-foot{
+    margin-top:auto;
+    padding-top:24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .icon-btn{
+    width:34px;height:34px;
+    flex:none;
+    display:grid;place-items:center;
+    padding:0;
+    cursor:pointer;
+    background:transparent;
+    border:1px solid var(--rule-strong);
+    color:var(--ink);
+    transition:border-color .18s ease, color .18s ease;
+  }
+  .icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .icon-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;
+                stroke-linecap:round;stroke-linejoin:round}
+  [data-theme="dark"] .i-moon{display:none}
+  [data-theme="light"] .i-sun{display:none}
+
+  /* ===== 右侧内容 ===== */
+  .content{padding:clamp(30px,5vh,58px) 0 0;min-width:0}
+
+  .hero{padding-bottom:clamp(20px,3.4vh,36px)}
+  .hero .micro{margin:0 0 clamp(20px,4vh,34px)}
+  .display{
+    margin:0;
+    font-size:clamp(2.8rem,7vw,5rem);
+    line-height:1.06;
+    letter-spacing:-.025em;
+    font-weight:700;
+    text-wrap:balance;
+    overflow-wrap:anywhere;
+  }
+  .display .nm{position:relative;white-space:nowrap}
+  .display .nm::after{
+    content:"";
+    position:absolute;
+    left:0;right:0;bottom:.06em;
+    height:2px;
+    background:var(--accent);
+  }
+  .lede{
+    margin:clamp(20px,3.4vh,32px) 0 0;
+    max-width:44ch;
+    font-size:1.08rem;
+    line-height:1.8;
+    color:var(--ink-2);
+  }
+  .meta{margin:14px 0 0}
+  .cta{
+    margin:clamp(26px,4vh,40px) 0 0;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px 34px;
+  }
+  .link{
+    display:inline-flex;
+    align-items:baseline;
+    gap:7px;
+    padding-bottom:3px;
+    font-size:15px;
+    font-weight:600;
+    text-decoration:none;
+    position:relative;
+  }
+  .link::after{
+    content:"";
+    position:absolute;
+    left:0;bottom:0;
+    height:1px;width:100%;
+    background:currentColor;
+    transform-origin:left;
+    transition:transform .28s cubic-bezier(.2,.7,.3,1);
+  }
+  .link:hover{color:var(--accent)}
+  .link:hover::after{transform:scaleX(.28)}
+  .link svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.7;
+            stroke-linecap:round;stroke-linejoin:round;transition:transform .28s cubic-bezier(.2,.7,.3,1)}
+  .link:hover svg{transform:translate(2px,-2px)}
+
+  /* ===== 内容区块 ===== */
+  .sec{
+    padding:clamp(34px,5.4vh,58px) 0 clamp(26px,4vh,42px);
+    scroll-margin-top:24px;
+  }
+  .sec-head{
+    display:grid;
+    grid-template-columns:38px minmax(0,auto) minmax(24px,1fr);
+    align-items:baseline;
+    column-gap:14px;
+    margin-bottom:clamp(20px,3vh,30px);
+  }
+  .sec-num{color:var(--accent);font-size:11px;letter-spacing:.08em}
+  .sec-title{
+    margin:0;
+    font-size:1.05rem;
+    font-weight:700;
+    letter-spacing:.06em;
+  }
+  .sec-rule{height:1px;background:var(--rule);transform:translateY(-4px)}
+
+  .prose{max-width:62ch}
+  .prose p{margin:0 0 1.05em}
+  .prose p:last-child{margin-bottom:0}
+  .prose strong{font-weight:600}
+
+  /* 技能：表格式两栏 */
+  .skills{
+    list-style:none;
+    margin:0;
+    padding:0;
+    border-top:1px solid var(--rule);
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    column-gap:clamp(24px,4vw,56px);
+  }
+  .skills li{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    padding:11px 0;
+    border-bottom:1px solid var(--rule);
+    font-size:15px;
+  }
+  .skills span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+  /* 项目：通栏行 */
+  .rows{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+  .row{
+    border-bottom:1px solid var(--rule);
+  }
+  .row a{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(120px,188px) 58px 18px;
+    align-items:baseline;
+    column-gap:clamp(14px,2.6vw,34px);
+    padding:clamp(16px,2.4vh,22px) 0;
+    text-decoration:none;
+  }
+  .row h3{
+    margin:0;
+    font-size:1.12rem;
+    font-weight:700;
+    letter-spacing:-.005em;
+    transition:color .2s ease;
+  }
+  .row .desc{
+    margin:4px 0 0;
+    font-size:14px;
+    line-height:1.7;
+    color:var(--muted);
+    max-width:52ch;
+  }
+  .row .stack{font-size:12.5px;line-height:1.7;color:var(--muted);letter-spacing:.02em}
+  .row .year{font-size:12px;color:var(--muted);text-align:right}
+  .row .go{
+    justify-self:end;
+    width:14px;height:14px;
+    fill:none;stroke:var(--muted);stroke-width:1.7;
+    stroke-linecap:round;stroke-linejoin:round;
+    transition:transform .28s cubic-bezier(.2,.7,.3,1), stroke .2s ease;
+  }
+  .row a:hover h3{color:var(--accent)}
+  .row a:hover .go{transform:translateX(4px);stroke:var(--accent)}
+
+  /* 联系 */
+  .contact{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+  .contact li{border-bottom:1px solid var(--rule)}
+  .contact a{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,auto) 18px;
+    align-items:baseline;
+    column-gap:20px;
+    padding:15px 0;
+    text-decoration:none;
+  }
+  .contact b{font-size:15px;font-weight:600;transition:color .2s ease}
+  .contact small{font-size:13px;color:var(--muted)}
+  .contact .go{
+    justify-self:end;
+    width:14px;height:14px;
+    fill:none;stroke:var(--muted);stroke-width:1.7;
+    stroke-linecap:round;stroke-linejoin:round;
+    transition:transform .28s cubic-bezier(.2,.7,.3,1), stroke .2s ease;
+  }
+  .contact a:hover b{color:var(--accent)}
+  .contact a:hover .go{transform:translateX(4px);stroke:var(--accent)}
+
+  footer{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 26px;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-top:clamp(20px,3vh,30px);
+    padding:24px 0 54px;
+    border-top:1px solid var(--rule);
+  }
+
+  /* ===== 减少动态效果 ===== */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{transition:none !important;animation:none !important}
+  }
+
+  /* ===== 矮窗口（笔记本、分屏）：压缩左栏留白，避免底部被裁掉 ===== */
+  @media (min-width:901px) and (max-height:680px){
+    .rail{padding:26px 0 20px}
+    .rail .eyebrow{margin:14px 0 12px}
+    .rail-nav{margin-top:20px}
+    .rail-foot{padding-top:14px}
+    .content{padding-top:26px}
+  }
+
+  /* ===== 窄屏：收成单栏 ===== */
+  @media (max-width:900px){
+    body{font-size:16px;line-height:1.8}
+    .layout{grid-template-columns:minmax(0,1fr);row-gap:0}
+    .rail{
+      position:static;
+      height:auto;
+      border-right:0;
+      border-bottom:1px solid var(--rule);
+      padding:26px 0 18px;
+      display:block;
+    }
+    .rail-top{display:flex;align-items:center;gap:16px}
+    .rail-top .eyebrow{display:none}
+    .monogram{width:40px;height:40px;font-size:17px}
+    .rail-name{font-size:1.06rem;margin:0}
+    .rail-role{margin-top:2px;font-size:12.5px}
+    .rail-nav{
+      margin:20px 0 0;
+      display:flex;
+      flex-wrap:wrap;
+      gap:2px 22px;
+      border:0;
+    }
+    .rail-nav li{border:0}
+    .rail-nav a{padding:4px 0;font-size:13.5px}
+    .rail-foot{padding-top:18px}
+    .content{padding-top:clamp(26px,4vh,40px)}
+    .row a{grid-template-columns:minmax(0,1fr) 18px;row-gap:6px}
+    .row .stack,.row .year{grid-column:1 / -1;text-align:left}
+    .row .stack{margin-top:-2px}
+    .row .go{grid-row:1;grid-column:2}
+    .contact a{grid-template-columns:minmax(0,1fr) 18px;row-gap:2px}
+    .contact small{grid-column:1}
+    .contact .go{grid-row:1;grid-column:2}
+  }
+  @media (max-width:560px){
+    .display{font-size:clamp(2.1rem,10.5vw,2.8rem)}
+    .lede{font-size:1rem}
+    .rail-nav{gap:2px 16px}
+    .cta{gap:10px 24px}
+  }
+</style>
 </head>
 <body>
-    <h1>你好，世界！</h1>
-    <p>欢迎来到我的第一个个人网站。这里是使用 GitHub Pages 搭建的。</p>
+<a class="skip" href="#main">跳到主要内容</a>
+
+<div class="shell layout">
+  <!-- ===== 左栏：身份 + 目录 ===== -->
+  <aside class="rail">
+    <div>
+      <div class="rail-top">
+        <!-- TODO: 换成你名字的首字母，或改成 <img> 头像 -->
+        <div class="monogram" aria-hidden="true">D</div>
+        <div>
+          <p class="eyebrow micro" style="margin:0 0 6px">个人主页 · Personal</p>
+          <!-- TODO: 你的名字 -->
+          <p class="rail-name">你的名字</p>
+          <!-- TODO: 一句话说明方向或职业 -->
+          <p class="rail-role">后端开发工程师<br>用代码把复杂问题变简单</p>
+        </div>
+      </div>
+
+      <nav aria-label="页面导航">
+        <ul class="rail-nav">
+          <li><a href="#about"><span class="n mono">01</span>关于</a></li>
+          <li><a href="#skills"><span class="n mono">02</span>技能</a></li>
+          <li><a href="#projects"><span class="n mono">03</span>项目</a></li>
+          <li><a href="#contact"><span class="n mono">04</span>联系</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="rail-foot">
+      <p class="micro" style="margin:0">© <span id="year">2026</span> 你的名字</p>
+      <button class="icon-btn" id="theme-toggle" type="button"
+              aria-label="切换到深色主题" title="切换主题">
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.6 14.3A8.6 8.6 0 0 1 9.7 3.4a8.6 8.6 0 1 0 10.9 10.9Z"/>
+        </svg>
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.5 1.5M17.1 17.1l1.5 1.5M18.6 5.4l-1.5 1.5M6.9 17.1l-1.5 1.5"/>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ===== 右栏：内容 ===== -->
+  <main class="content" id="main">
+    <!-- ===== 首屏 ===== -->
+    <section class="hero">
+      <p class="micro">作品集 · Est. 2026</p>
+      <h1 class="display">你好，我是<span class="nm">你的名字</span>。</h1>
+      <!-- TODO: 换成你的一句话介绍 -->
+      <p class="lede">一句话介绍你自己：你在做什么、擅长什么、最近关心什么。</p>
+      <!-- TODO: 方向 / 城市 / 当前状态 -->
+      <p class="meta micro">后端开发 · 所在城市 · 开放合作</p>
+      <div class="cta">
+        <!-- TODO: 换成你的真实邮箱 -->
+        <a class="link" href="mailto:your-email@example.com">
+          写邮件给我
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6.2 4.5h5.3v5.3"/></svg>
+        </a>
+        <a class="link" href="https://github.com/DeepSeekOfficia1" target="_blank" rel="noopener">
+          GitHub
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6.2 4.5h5.3v5.3"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== 关于我 ===== -->
+    <section class="sec" id="about">
+      <div class="sec-head">
+        <span class="sec-num mono">01</span>
+        <h2 class="sec-title">关于我</h2>
+        <span class="sec-rule" aria-hidden="true"></span>
+      </div>
+      <div class="prose">
+        <!-- TODO: 换成你自己的介绍，可写 2~3 段 -->
+        <p>这里写你是谁、在做什么方向、现在在解决什么问题。两三句话足够，具体比宏大更好读。
+           如果要提经历，写「做过什么」比写「头衔」更有说服力。</p>
+        <p>第二段可以写一点个人的东西：在学什么、喜欢什么、愿意和谁合作。
+           联系方式在页面底部，有想法随时找我聊。</p>
+      </div>
+    </section>
+
+    <!-- ===== 技能栈 ===== -->
+    <section class="sec" id="skills">
+      <div class="sec-head">
+        <span class="sec-num mono">02</span>
+        <h2 class="sec-title">技能栈</h2>
+        <span class="sec-rule" aria-hidden="true"></span>
+      </div>
+      <!-- TODO: 增删下面的条目，右侧标签写分类或熟练度 -->
+      <ul class="skills">
+        <li>Python<span>语言</span></li>
+        <li>JavaScript / TypeScript<span>语言</span></li>
+        <li>FastAPI · Django<span>框架</span></li>
+        <li>React · Vue<span>前端</span></li>
+        <li>PostgreSQL · Redis<span>存储</span></li>
+        <li>Docker · Linux<span>运维</span></li>
+        <li>Git · CI/CD<span>工程</span></li>
+        <li>HTML · CSS<span>基础</span></li>
+      </ul>
+    </section>
+
+    <!-- ===== 项目精选 ===== -->
+    <section class="sec" id="projects">
+      <div class="sec-head">
+        <span class="sec-num mono">03</span>
+        <h2 class="sec-title">项目精选</h2>
+        <span class="sec-rule" aria-hidden="true"></span>
+      </div>
+      <!-- TODO: 换成你的真实项目：名称 / 一句话说明 / 技术栈 / 年份 -->
+      <ul class="rows">
+        <li class="row">
+          <a href="https://github.com/DeepSeekOfficia1?tab=repositories" target="_blank" rel="noopener">
+            <div>
+              <h3>项目名称一</h3>
+              <p class="desc">一句话说明它解决了什么问题、你负责哪一部分，以及最有意思的技术点。</p>
+            </div>
+            <span class="stack">Python · FastAPI · Postgres</span>
+            <span class="year mono">2026</span>
+            <svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </a>
+        </li>
+        <li class="row">
+          <a href="https://github.com/DeepSeekOfficia1?tab=repositories" target="_blank" rel="noopener">
+            <div>
+              <h3>项目名称二</h3>
+              <p class="desc">一句话说明它解决了什么问题、你负责哪一部分，以及最有意思的技术点。</p>
+            </div>
+            <span class="stack">TypeScript · React · Vite</span>
+            <span class="year mono">2025</span>
+            <svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </a>
+        </li>
+        <li class="row">
+          <a href="https://github.com/DeepSeekOfficia1?tab=repositories" target="_blank" rel="noopener">
+            <div>
+              <h3>项目名称三</h3>
+              <p class="desc">一句话说明它解决了什么问题、你负责哪一部分，以及最有意思的技术点。</p>
+            </div>
+            <span class="stack">工具 · 自动化 · Docker</span>
+            <span class="year mono">2025</span>
+            <svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ===== 联系 ===== -->
+    <section class="sec" id="contact">
+      <div class="sec-head">
+        <span class="sec-num mono">04</span>
+        <h2 class="sec-title">联系我</h2>
+        <span class="sec-rule" aria-hidden="true"></span>
+      </div>
+      <ul class="contact">
+        <li>
+          <a href="https://github.com/DeepSeekOfficia1" target="_blank" rel="noopener">
+            <b>GitHub</b>
+            <small>@DeepSeekOfficia1</small>
+            <svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </a>
+        </li>
+        <li>
+          <!-- TODO: 换成你的真实邮箱 -->
+          <a href="mailto:your-email@example.com">
+            <b>邮箱</b>
+            <small>your-email@example.com</small>
+            <svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/DeepSeekOfficia1/DeepSeekOfficia1.github.io" target="_blank" rel="noopener">
+            <b>本站源码</b>
+            <small>托管在 GitHub Pages</small>
+            <svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </a>
+        </li>
+      </ul>
+      <footer>
+        <p class="micro" style="margin:0">© <span id="year2">2026</span> 你的名字 · Built with GitHub Pages</p>
+        <p class="micro" style="margin:0">单文件 · 无外部依赖</p>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<script>
+  (function () {
+    "use strict";
+
+    var root = document.documentElement;
+    var toggle = document.getElementById("theme-toggle");
+    var metaColor = document.getElementById("theme-color");
+    var COLORS = { light: "#faf9f7", dark: "#100f0e" };
+
+    function applyTheme(theme) {
+      root.setAttribute("data-theme", theme);
+      if (metaColor) { metaColor.setAttribute("content", COLORS[theme]); }
+      if (toggle) {
+        toggle.setAttribute("aria-label",
+          theme === "dark" ? "切换到浅色主题" : "切换到深色主题");
+      }
+    }
+
+    // 优先记住上一次选择，其次跟随系统
+    var saved = null;
+    try { saved = localStorage.getItem("theme"); } catch (e) {}
+    var prefersDark = window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    applyTheme(saved === "dark" || saved === "light" ? saved : (prefersDark ? "dark" : "light"));
+
+    if (toggle) {
+      toggle.addEventListener("click", function () {
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        applyTheme(next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+      });
+    }
+
+    // 页脚年份
+    var y = String(new Date().getFullYear());
+    ["year", "year2"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) { el.textContent = y; }
+    });
+
+    // 目录高亮当前区块
+    var links = Array.prototype.slice.call(
+      document.querySelectorAll(".rail-nav a[href^='#']"));
+    var sections = links
+      .map(function (a) { return document.querySelector(a.getAttribute("href")); })
+      .filter(Boolean);
+
+    if ("IntersectionObserver" in window && sections.length) {
+      var setCurrent = function (id) {
+        links.forEach(function (a) {
+          if (id && a.getAttribute("href") === "#" + id) {
+            a.setAttribute("aria-current", "true");
+          } else {
+            a.removeAttribute("aria-current");
+          }
+        });
+      };
+      var spy = new IntersectionObserver(function (entries) {
+        // 还没开始滚动时不高亮任何一项，保持首屏干净
+        if (window.scrollY < 40) { setCurrent(null); return; }
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { setCurrent(entry.target.id); }
+        });
+      }, { rootMargin: "-40% 0px -55% 0px" });
+      sections.forEach(function (s) { spy.observe(s); });
+      window.addEventListener("scroll", function () {
+        if (window.scrollY < 40) { setCurrent(null); }
+      }, { passive: true });
+    }
+  })();
+</script>
 </body>
 </html>
